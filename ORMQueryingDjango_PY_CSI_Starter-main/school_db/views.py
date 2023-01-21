@@ -10,6 +10,7 @@ from .const_data import view_information
 
 # Find all students and print their first_name, last_name, and GPA to the terminal
 # Example solution:
+
 def example_solution(request):
 
     students = Student.objects.all()
@@ -57,9 +58,15 @@ SELECT `school_db_student`.`id`,
 # Find all students who have a GPA greater than 3.0.
 # Order the data by highest GPAs first (descending).
 # Print out each student's full name and gpa to the terminal
+
 def problem_one(request):
 
-    return complete(request)
+  students = Student.objects.filter(gpa__gt=3.0).order_by('-gpa')
+
+  for student in students:
+    print (f' Full Name: {student.first_name} {student.last_name} GPA: {student.gpa}') 
+    
+  return complete(request)
 
 
 # Supporting Query Method Documentation:
@@ -96,9 +103,16 @@ SELECT `school_db_student`.`id`,
 # Find all instructors hired prior to 2010
 # Order by hire date ascending
 # Print out the instructor's full name and hire date to the terminal
+
 def problem_two(request):
 
-    return complete(request)
+  instructors = Instructor.objects.filter(hire_date__year__lt= 2010).order_by('hire_date')
+
+  for instructor in instructors:
+      print(f" Full Name: {instructor.first_name} {instructor.last_name}")
+      print(f" Hire date: {instructor.hire_date}")
+
+  return complete(request)
 
 
 # Supporting Query Method Documentation:
@@ -139,7 +153,19 @@ SELECT `school_db_instructor`.`id`,
 # (Do not hard code his name in the print)
 def problem_three(request):
 
-    return complete(request)
+  instructor = Instructor.objects.get(id=2)
+  courses = Course.objects.filter(instructor = 2)
+
+  
+  print()
+  print(f'Instructor Name: {instructor.first_name} {instructor.last_name}')
+  print("Courses:")
+  for course in courses:
+    
+    print(f'- {course.name}')
+  print()  
+
+  return complete(request)
 
 
 # Supporting Query Method Documentation:
@@ -184,8 +210,13 @@ SELECT `school_db_instructor`.`id`,
 
 # Get the count of students, courses, and instructors and print them in the terminal
 def problem_four(request):
+  studnet_count = Student.objects.all().count()
+  courses = Course.objects.all().count()
+  instructor_count = Instructor.objects.all().count()
 
-    return complete(request)
+  print (f' Students count: {studnet_count}\n Courses count: {courses}\n Structors count: {instructor_count}')
+
+  return complete(request)
 
 
 # Supporting Query Method Documentation:
@@ -229,7 +260,15 @@ SELECT COUNT(*) AS `__count`
 # NOTE every time you execute this function a duplicate student will be created with a different primary key number
 def problem_five(request):
 
-    return complete(request)
+  try:
+    SD = Student.objects.get(id=11)
+  except Student.DoesNotExist:
+    SD = Student (id:= 11, first_name:='Kyle', last_name:='Hardwood', year:=9, gpa:=3.0)
+    SD.save()
+
+  print(f' ID: {SD.id}\n Full Name: {SD.first_name} {SD.last_name}\n Year: {SD.year}\n GPA: {SD.gpa}')
+
+  return complete(request)
 
 
 # Supporting Query Method Documentation:
@@ -262,9 +301,13 @@ VALUES ('Kyle', 'Harwood', 9, 3.0)
 def problem_six(request):
 
     # Make sure to set this equal to the primary key of the row you just created!
-    student_id = 11
+    student_id = Student.objects.filter(id =11).update(gpa = 3.5)
+    student_id = Student.objects.filter(id = 11)
+    for student in student_id: 
+        #print(f'-{student.first_name}')
+        print(f' ID:{student.id}\n Full Name:{student.first_name} {student.last_name}\n GPA:{student.gpa}')
 
-    return complete(request)
+        return complete(request)
 
 
 # Supporting Query Method Documentation:
@@ -309,15 +352,16 @@ LIMIT 21
 def problem_seven(request):
 
     # Make sure to set this equal to the primary key of the row you just created!
-    student_id = 11
+    #student_id = 11
 
     try:
-        student = Student.objects.get(pk=student_id)
-    except ObjectDoesNotExist:
-        print('Great! It failed and couldnt find the object because we deleted it!')
-
-    return complete(request)
-
+      SD = Student.objects.filter(id = 11).delete()
+    except Student.DoesNotExist:
+      print('Great! It failed and couldnt find the object because we deleted it!')
+    else :
+      print ('no error but student was removed from workbench')
+      
+      return complete(request)
 
 # Supporting Query Method Documentation:
 """
@@ -366,7 +410,7 @@ SELECT `school_db_student`.`id`,
 # Find all of the instructors that only belong to a single course
 # Print out the instructors full name and number of courses to the console
 def bonus_problem(request):
-
+    
     return complete(request)
 
 
